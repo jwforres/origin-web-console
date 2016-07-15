@@ -134,7 +134,7 @@ window.OPENSHIFT_CONSTANTS = {
           items: [
             {
               label: "Quota",
-              href: "/settings"  // TODO need a new page fo this
+              href: "/quota"  // TODO need a new page fo this
             },
             {
               label: "Other Resources",

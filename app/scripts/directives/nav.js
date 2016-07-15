@@ -15,7 +15,6 @@ angular.module('openshiftConsole')
         $scope.activeSecondary;
         $scope.navItems = Constants.PROJECT_NAVIGATION;
         $scope.activePrimary = _.find($scope.navItems, function(primaryItem) {
-          // If the href matches the path exactly, this is active
           if (itemMatchesPath(primaryItem, path)) {
             $scope.activeSecondary = null;
             return true;
@@ -34,13 +33,6 @@ angular.module('openshiftConsole')
           });
         });
       }
-    };
-  })
-  .directive('sidebarNavItem', function() {
-    return {
-      restrict: 'E',
-      replace: true,
-      templateUrl: "views/_sidebar-main-nav-item.html"
     };
   })
   .directive('projectHeader', function($timeout, $location, $filter, DataService, projectOverviewURLFilter) {
@@ -196,13 +188,4 @@ angular.module('openshiftConsole')
         });
       }
     };
-  }])
-  .directive('oscSecondaryNav', function() {
-    return {
-      restrict: 'A',
-      scope: {
-        tabs: '='
-      },
-      templateUrl: 'views/directives/osc-secondary-nav.html'
-    };
-  });
+  }]);

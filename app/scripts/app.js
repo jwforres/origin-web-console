@@ -29,80 +29,6 @@ angular
     'ui.select',
     'key-value-editor'
   ])
-  .constant("mainNavTabs", [])  // even though its not really a "constant", it has to be created as a constant and not a value
-                         // or it can't be referenced during module config
-  // configure our tabs and routing
-  .config(['mainNavTabs','$routeProvider', 'HawtioNavBuilderProvider', function(tabs, $routeProvider, builder) {
-    var template = function() {
-      return "<sidebar-nav-item></sidebar-nav-item>";
-    };
-
-    var projectHref = function(path) {
-      return function() {
-        var injector = HawtioCore.injector;
-        if (injector) {
-          var routeParams = injector.get("$routeParams");
-          if (routeParams.project) {
-            return "project/" + encodeURIComponent(routeParams.project) + "/" + path;
-          }
-        }
-        return "project/:project/" + path;
-      };
-    };
-
-    var templatePath = "views";
-    var pluginName = "openshiftConsole";
-    var tab = builder.create()
-     .id(builder.join(pluginName, "overview"))
-     .title(function () { return "Overview"; })
-     .template(template)
-     .href(projectHref("overview"))
-     .page(function () { return builder.join(templatePath, 'overview.html'); })
-     .build();
-    tab.icon = "dashboard";
-    tabs.push(tab);
-
-    // Old overview, keep for now in case of emergency
-    // tab = builder.create()
-    //  .id(builder.join(pluginName, "topology"))
-    //  .title(function () { return "Topology"; })
-    //  .template(template)
-    //  .href(projectHref("overview"))
-    //  .page(function () { return builder.join(templatePath, 'project.html'); })
-    //  .build();
-    // tab.icon = "map-o";
-    // tabs.push(tab);
-
-    tab = builder.create()
-      .id(builder.join(pluginName, "browse"))
-      .title(function () { return "Browse"; })
-      .template(template)
-      .href(projectHref("browse"))
-      .subPath("Builds", "builds", builder.join(templatePath, 'builds.html'))
-      .subPath("Deployments", "deployments", builder.join(templatePath, 'deployments.html'))
-      .subPath("Events", "events", builder.join(templatePath, 'events.html'))
-      .subPath("Image Streams", "images", builder.join(templatePath, 'images.html'))
-      .subPath("Pods", "pods", builder.join(templatePath, 'pods.html'))
-      .subPath("Routes", "routes", builder.join(templatePath, 'browse/routes.html'))
-      .subPath("Services", "services", builder.join(templatePath, 'services.html'))
-      .subPath("Storage", "storage", builder.join(templatePath, 'storage.html'))
-      .subPath("Other Resources", "other", builder.join(templatePath, 'other-resources.html'))
-      .build();
-    tab.icon = "sitemap";
-    tabs.push(tab);
-
-
-    tab = builder.create()
-     .id(builder.join(pluginName, "settings"))
-     .title(function () { return "Settings"; })
-     .template(template)
-     .href(projectHref("settings"))
-     .page(function () { return builder.join(templatePath, 'settings.html'); })
-     .build();
-    tab.icon = "sliders";
-    tabs.push(tab);
-
-  }])
   .config(function ($routeProvider) {
     $routeProvider
       .when('/', {
@@ -127,10 +53,10 @@ angular
       //   templateUrl: 'views/project.html',
       //   controller: 'TopologyController'
       // })
-      .when('/project/:project/settings', {
-        templateUrl: 'views/settings.html',
-        controller: 'SettingsController'
-      })
+      .when('/project/:project/quota', {
+        templateUrl: 'views/quota.html',
+        controller: 'QuotaController'
+      })      
       .when('/project/:project/browse', {
         redirectTo: function(params) {
           return '/project/' + encodeURIComponent(params.project) + "/browse/pods";  // TODO decide what subtab to default to here
@@ -351,11 +277,6 @@ angular
   .config(function($compileProvider){
     $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|mailto|git):/i);
   })
-  .run(['mainNavTabs', "HawtioNav", function (tabs, HawtioNav) {
-    for (var i = 0; i < tabs.length; i++) {
-      HawtioNav.add(tabs[i]);
-    }
-  }])
   .run(function($rootScope, LabelFilter){
     $rootScope.$on('$locationChangeSuccess', function(event) {
       LabelFilter.setLabelSelector(new LabelSelector({}, true), true);
