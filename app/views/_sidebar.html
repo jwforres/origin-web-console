@@ -1,140 +1,34 @@
 <nav class="navbar navbar-sidebar">
     <ul class="nav nav-sidenav-primary">
-      <li ng-class="{ active: true }"> <!-- TODO active -->
-        <a href="/project/{{projectName}}/overview">
-          <span class="fa fa-dashboard fa-fw"></span> Overview
+      <li ng-repeat="primaryItem in navItems" ng-class="{ active: primaryItem === activePrimary }"> <!-- TODO active -->
+        <a ng-if="primaryItem.href" ng-href="/project/{{projectName}}{{primaryItem.href}}">
+          <span class="{{primaryItem.iconClass}}"></span> {{primaryItem.label}}
         </a>
-      </li>
-      <li>
-        <a href="" data-toggle="dropdown" class="dropdown-toggle">
-          <span class="fa fa-cubes fa-fw"></span> Applications <span class="fa fa-angle-right"></span>
+        <a ng-if="!primaryItem.href" href="" data-toggle="dropdown" class="dropdown-toggle">
+          <span class="{{primaryItem.iconClass}}"></span> {{primaryItem.label}}
         </a>
-        <div class="hover-nav dropdown-menu hidden-xs">
+        <div ng-if="primaryItem.secondaryNavSections.length" class="hover-nav dropdown-menu hidden-xs">
           <ul class="nav nav-sidenav-secondary">
-            <li ng-class="{ active: false }"> <!-- TODO secondary active-->
-              <a href="/project/{{projectName}}/browse/deployments">Deployments</a>
+            <li ng-repeat-start="secondarySection in primaryItem.secondaryNavSections" ng-if="secondarySection.header" class="divider-header">
+              {{secondarySection.header}}
             </li>
-            <li>
-              <a href="/project/{{projectName}}/browse/pods">Pods</a>
+            <li ng-repeat="secondaryItem in secondarySection.items" ng-class="{ active: secondaryItem === activeSecondary }">
+              <a ng-href="{{secondaryItem.href ? ('/project/' + projectName + secondaryItem.href) : ''}}">{{secondaryItem.label}}</a>
             </li>
-            <li class="divider-header">Networking</li>
-            <li>
-              <a href="/project/{{projectName}}/browse/services">Services</a>
-            </li>
-            <li>
-              <a href="/project/{{projectName}}/browse/routes">Routes</a>
-            </li>
+            <li ng-repeat-end style="display:none;">
           </ul>
         </div>
-        <div class="hover-nav visible-xs-block">
+        <div ng-if="primaryItem.secondaryNavSections.length" class="hover-nav visible-xs-block">
           <ul class="nav nav-sidenav-secondary">
-            <li ng-class="{ active: false }"> <!-- TODO secondary active-->
-              <a href="/project/{{projectName}}/browse/deployments">Deployments</a>
+            <li ng-repeat-start="secondarySection in primaryItem.secondaryNavSections" ng-if="secondarySection.header" class="divider-header">
+              {{secondarySection.header}}
             </li>
-            <li>
-              <a href="/project/{{projectName}}/browse/pods">Pods</a>
+            <li ng-repeat="secondaryItem in secondarySection.items" ng-class="{ active: secondaryItem === activeSecondary }">
+              <a ng-href="{{secondaryItem.href ? ('/project/' + projectName + secondaryItem.href) : ''}}">{{secondaryItem.label}}</a>
             </li>
-            <li class="divider-header">Networking</li>
-            <li>
-              <a href="/project/{{projectName}}/browse/services">Services</a>
-            </li>
-            <li>
-              <a href="/project/{{projectName}}/browse/routes">Routes</a>
-            </li>
+            <li ng-repeat-end style="display:none;">
           </ul>
-        </div>
-      </li>
-      <li>
-        <a href="" data-toggle="dropdown" class="dropdown-toggle">
-          <span class="pficon pficon-build fa-fw"></span> Builds <span class="fa fa-angle-right"></span>
-        </a>
-        <div class="hover-nav dropdown-menu hidden-xs">
-          <ul class="nav nav-sidenav-secondary">
-            <li ng-class="{ active: false }"> <!-- TODO secondary active-->
-              <a href="/project/{{projectName}}/browse/builds">Builds</a>
-            </li>
-            <li>
-              <a href="#">Pipeline Builds</a>
-            </li>
-            <li>
-              <a href="/project/{{projectName}}/browse/images">Images</a>
-            </li>
-          </ul>
-        </div>
-        <div class="hover-nav visible-xs-block">
-          <ul class="nav nav-sidenav-secondary">
-            <li ng-class="{ active: false }"> <!-- TODO secondary active-->
-              <a href="/project/{{projectName}}/browse/builds">Builds</a>
-            </li>
-            <li>
-              <a href="#">Pipeline Builds</a>
-            </li>
-            <li>
-              <a href="/project/{{projectName}}/browse/images">Images</a>
-            </li>
-          </ul>
-        </div>
-      </li>
-      <li>
-        <a href="" data-toggle="dropdown" class="dropdown-toggle">
-          <span class="fa fa-files-o fa-fw"></span> Resources <span class="fa fa-angle-right"></span>
-        </a>
-        <div class="hover-nav dropdown-menu hidden-xs">
-          <ul class="nav nav-sidenav-secondary">
-            <li ng-class="{ active: false }"> <!-- TODO secondary active-->
-              <a href="#">Quota</a>
-            </li>
-            <li>
-              <a href="/project/{{projectName}}/browse/other">Other Resources</a>
-            </li>
-          </ul>
-        </div>
-        <div class="hover-nav visible-xs-block">
-          <ul class="nav nav-sidenav-secondary">
-            <li ng-class="{ active: false }"> <!-- TODO secondary active-->
-              <a href="#">Quota</a>
-            </li>
-            <li>
-              <a href="/project/{{projectName}}/browse/other">Other Resources</a>
-            </li>
-          </ul>
-        </div>
-      </li>
-      <li>
-        <a href="/project/{{projectName}}/browse/storage">
-          <span class="pficon pficon-container-node fa-fw"></span> Storage
-        </a>
-      </li>
-      <li>
-        <a href="" data-toggle="dropdown" class="dropdown-toggle">
-          <span class="pficon pficon-screen fa-fw"></span> Monitoring <span class="fa fa-angle-right"></span>
-        </a>
-        <div class="hover-nav dropdown-menu hidden-xs">
-          <ul class="nav nav-sidenav-secondary">
-            <li ng-class="{ active: false }"> <!-- TODO secondary active-->
-              <a href="/project/{{projectName}}/browse/events">Events</a>
-            </li>
-            <li>
-              <a href="#">Logs</a>
-            </li>
-            <li>
-              <a href="#">Metrics</a>
-            </li>
-          </ul>
-        </div>
-        <div class="hover-nav visible-xs-block">
-          <ul class="nav nav-sidenav-secondary">
-            <li ng-class="{ active: false }"> <!-- TODO secondary active-->
-              <a href="/project/{{projectName}}/browse/events">Events</a>
-            </li>
-            <li>
-              <a href="#">Logs</a>
-            </li>
-            <li>
-              <a href="#">Metrics</a>
-            </li>
-          </ul>
-        </div>
+        </div>          
       </li>
     </ul>
     <!-- Group utility links into single nav -->
