@@ -175,6 +175,10 @@ angular
         templateUrl: 'views/create-route.html',
         controller: 'CreateRouteController'
       })
+      .when('/project/:project/edit', {
+        templateUrl: 'views/edit/project.html',
+        controller: 'EditProjectController'
+      })      
       .when('/project/:project/attach-pvc', {
         templateUrl: 'views/attach-pvc.html',
         controller: 'AttachPVCController'
