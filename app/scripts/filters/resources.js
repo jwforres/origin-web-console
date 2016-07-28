@@ -22,6 +22,7 @@ angular.module('openshiftConsole')
       "deploymentConfig":         ["openshift.io/deployment-config.name"],
       "deployment":               ["openshift.io/deployment.name"],
       "pod":                      ["openshift.io/deployer-pod.name"],
+      "deployerPod":              ["openshift.io/deployer-pod.name"],      
       "deployerPodFor":           ["openshift.io/deployer-pod-for.name"],
       "deploymentStatus":         ["openshift.io/deployment.phase"],
       "deploymentStatusReason":   ["openshift.io/deployment.status-reason"],

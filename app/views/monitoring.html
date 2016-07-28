@@ -60,7 +60,7 @@
                     </div>
                     <div class="list-group-item list-group-item-expandable"
                          ng-repeat-start="build in filteredBuilds track by (build | uid)"
-                         ng-click="expanded = !expanded; expanded ? expandItem(build) : collapseItem(build)"
+                         ng-click="expanded = !expanded; toggleItem(build, expanded)"
                          style="cursor: pointer;"
                          ng-class="{'expanded': expanded}">
                       <div class="list-view-pf-checkbox">
@@ -174,7 +174,7 @@
                     </div>                    
                     <div class="list-group-item list-group-item-expandable" 
                          ng-repeat-start="deployment in filteredDeployments track by (deployment | uid)"
-                         ng-click="expanded = !expanded; expanded ? expandItem(deployment) : collapseItem(deployment)"
+                         ng-click="expanded = !expanded; toggleItem(deployment, expanded)"
                          style="cursor: pointer;"
                          ng-class="{'expanded': expanded}">
                       <div class="list-view-pf-checkbox">
@@ -262,7 +262,7 @@
                     </div>                    
                     <div class="list-group-item list-group-item-expandable"
                          ng-repeat-start="pod in filteredPods track by (pod | uid)"
-                         ng-click="expanded = !expanded; expanded ? expandItem(pod) : collapseItem(pod)"
+                         ng-click="expanded = !expanded; toggleItem(pod, expanded)"
                          style="cursor: pointer;"
                          ng-class="{'expanded': expanded}">
                       <div class="list-view-pf-checkbox">

@@ -16,6 +16,7 @@ angular.module('openshiftConsole')
                                            ProjectsService,
                                            MetricsService,
                                            BuildsService,
+                                           PodsService,
                                            Logger,
                                            ImageStreamResolver,
                                            $rootScope) {
@@ -208,12 +209,39 @@ angular.module('openshiftConsole')
       });
     };        
 
-    $scope.expandItem = function(resource) {
-      $rootScope.$emit('event.resource.highlight', resource);
+    $scope.toggleItem = function(resource, expanded) {
+      var event = expanded ? 'event.resource.highlight' : 'event.resource.clear-highlight';
+      $rootScope.$emit(event, resource);
+      if (resource.kind === 'Build') {
+        var buildPod = _.get($scope.podsByName, $filter('annotation')(resource, 'buildPod'));
+        if (buildPod) {
+          $rootScope.$emit(event, buildPod);
+        }
+      }
+      if (resource.kind === 'ReplicationController') {
+        var deployerPodName = $filter('annotation')(resource, 'deployerPod');
+        if (deployerPodName) {
+          // The deployer pod is deleted immediately so mock the resource to send to the event highlighter
+          $rootScope.$emit(event, {
+            kind: "Pod",
+            metadata: {
+              name: deployerPodName
+            }
+          });
+        }
+        _.each($scope.podsByDeployment[resource.metadata.name], function(pod) {
+          $rootScope.$emit(event, pod);
+        });
+      }
     };
-    $scope.collapseItem = function(resource) {
-      $rootScope.$emit('event.resource.clear-highlight', resource);
-    };    
+
+    var groupPods = function() {
+      if (!$scope.pods || !$scope.deployments) {
+        return;
+      }
+
+      $scope.podsByDeployment = PodsService.groupByReplicationController($scope.pods, $scope.deployments);
+    };
 
     ProjectsService
       .get($routeParams.project)
@@ -222,7 +250,9 @@ angular.module('openshiftConsole')
         $scope.projectContext = context;
 
         DataService.watch("pods", context, function(pods) {
-          $scope.pods = orderByDate(pods.by("metadata.name"), true);
+          $scope.podsByName = pods.by("metadata.name");
+          $scope.pods = orderByDate($scope.podsByName, true);
+          groupPods();
           _.each($scope.pods, function(pod) {
             setPodLogVars(pod);
           });
@@ -232,6 +262,7 @@ angular.module('openshiftConsole')
 
         DataService.watch("replicationcontrollers", context, function(deployments) {
           $scope.deployments = orderByDate(deployments.by("metadata.name"), true);
+          groupPods();
           _.each($scope.deployments, function(deployment) {
             setDeploymentLogVars(deployment);
           });
