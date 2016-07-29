@@ -46,6 +46,11 @@
   }
 }
 
-.log-view.log-fixed-height  ::-webkit-scrollbar-track {
-  background-color: @scrollbar-track-inverse-alt;
+.log-view.log-fixed-height {
+  ::-webkit-scrollbar {
+    width: @scrollbar-width-log-viewer;
+  }
+  ::-webkit-scrollbar-track {
+    background-color: @scrollbar-track-inverse-alt;
+  }
 }

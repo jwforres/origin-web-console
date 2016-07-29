@@ -128,7 +128,7 @@
       background-color: @log-bg-color;
       bottom: 0;
       height: 30px;
-      right: @scrollbar-width;
+      right: @scrollbar-width-log-viewer;
       width: auto;
       &.dots div {
         left: 50%;
@@ -141,7 +141,7 @@
     }
     .log-scroll-bottom, .log-scroll-top {
       border-right-width: 1px;
-      right: 17px; // width of IE11 scrollbar
+      right: @scrollbar-width-log-viewer; // width of IE11 scrollbar
     }
     .log-view-output {
       overflow: auto;
