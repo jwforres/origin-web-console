@@ -1,5 +1,76 @@
-// styles for key-value-editor
+// Angular Key Value Editor styles
+
 .key-value-editor {
+  &.as-sortable-dragging {
+    .as-sortable-item-delete,
+    .input-group-addon,
+    input {
+      opacity: @as-sortable-dragging-opacity;
+    }
+  }
+
+  &.as-sortable-dragging .as-sortable-item-handle,
+  .as-sortable-item-delete:hover,
+  .as-sortable-DISABLED-item-delete:hover,
+  .as-sortable-item-handle:hover {
+    opacity: @as-sortable-item-icon-hover-opacity;
+  }
+
+  .as-sortable-item-delete,
+  .as-sortable-DISABLED-item-delete,
+  .as-sortable-item-handle {
+    display: inline-block;
+    font-size: @as-sortable-item-icon-font-size;
+    opacity: @as-sortable-item-icon-opacity;
+    padding: @as-sortable-item-icon-padding;
+    vertical-align: middle;
+  }
+
+  .as-sortable-item-delete,
+  .as-sortable-DISABLED-item-delete {
+    color: #333; // boostrap's @text-color
+    &:hover,
+    &:focus,
+    &:active {
+      text-decoration: none;
+    }
+  }
+
+  .as-sortable-item-handle {
+    cursor: move;
+  }
+
+  .as-sortable-placeholder {
+    border-top: @as-sortable-placeholder-border-top-width @as-sortable-placeholder-border-top-style @as-sortable-placeholder-border-top-color;
+    clear: left;
+    width: @as-sortable-placeholder-width;
+  }
+
+  .input-group-addon span[title]:not([data-original-title=""]) {
+    cursor: help;
+  }
+
+  .key-value-editor-buttons {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: (@as-sortable-item-button-width * 2);
+  }
+
+  .key-value-editor-entry {
+    display: table;
+    padding-right: (@as-sortable-item-button-width * 2);
+    position: relative;
+    width: 100%;
+  }
+
+  .key-value-editor-input,
+  .key-value-editor-header {
+    float: left;
+    padding-right: 5px;
+    width: 50%;
+  }
+
   .key-value-editor-header {
     margin-bottom: 5px;
   }
