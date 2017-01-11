@@ -65,8 +65,6 @@
             //  valueValidator: ''                    // regex string
             //  keyValidatorError: '',                // custom validation error
             //  valueValidatorError: ''               // custom validation error
-            //  keyIcon: '',                          // icon class, such as 'fa fa-lock'
-            //  keyIconTooltip: '',                   // text for tooltip
             //  valueIcon: '',                        // icon class, such as 'fa fa-lock'
             //  valueIconTooltip: ''                  // text for tooltip
             // }]
@@ -80,7 +78,6 @@
             keyValidatorError: '@',                   // general key validation error message
             keyValidatorErrorTooltip: '@',
             keyValidatorErrorTooltipIcon: '@',
-            keyIconTooltip: '@',                      // if the tooltip for the key icon is generic
             valueValidatorError: '@',                 // general value validation error message
             valueValidatorErrorTooltip: '@',
             valueValidatorErrorTooltipIcon: '@',

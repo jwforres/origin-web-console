@@ -30,37 +30,7 @@
 
         <label for="uniqueForKey(unique, $index)" class="sr-only">{{keyPlaceholder}}</label>
 
-        <!-- name/key has icon -->
-        <div class="input-group" ng-if="entry.keyIcon">
-          <span class="input-group-addon">
-            <span
-              class="{{entry.keyIcon}}"
-              aria-hidden="true"
-              data-toggle="tooltip"
-              data-placement="top"
-              data-original-title="{{entry.keyIconTooltip || keyIconTooltip}}"
-              title="{{entry.keyIconTooltip || keyIconTooltip}}"></span>
-          </span>
-          <input
-            type="text"
-            class="form-control"
-            ng-class="{ '{{setFocusKeyClass}}' : $last  }"
-            id="{{uniqueForKey(unique, $index)}}"
-            name="{{uniqueForKey(unique, $index)}}"
-            ng-attr-placeholder="{{ (!isReadonlyAny) && keyPlaceholder || ''}}"
-            ng-minlength="{{keyMinlength}}"
-            maxlength="{{keyMaxlength}}"
-            ng-model="entry.name"
-            ng-readonly="isReadonlyAny || isReadonlySome(entry.name) || entry.isReadonlyKey || entry.isReadonly"
-            ng-pattern="validation.key"
-            ng-value
-            ng-required="!allowEmptyKeys && entry.value"
-            ng-attr-key-value-editor-focus="{{grabFocus && $last}}">
-        </div>
-
-        <!-- name/key has no icon -->
         <input
-          ng-if="(!entry.keyIcon)"
           type="text"
           class="form-control"
           ng-class="{ '{{setFocusKeyClass}}' : $last  }"
