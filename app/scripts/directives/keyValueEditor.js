@@ -6,9 +6,10 @@
     .directive('keyValueEditor', [
       '$timeout',
       '$window',
+      '$filter',
       'keyValueEditorConfig',
       'keyValueEditorUtils',
-      function($timeout, $window, config, utils) {
+      function($timeout, $window, $filter, config, utils) {
 
         var first = utils.first;
         var contains = utils.contains;
@@ -58,7 +59,7 @@
             // entries: [{
             //  name: 'foo',
             //  value: 'bar',
-            //  isReadOnly: true|| false              // individual entries may be readonly
+            //  isReadonly: true|| false              // individual entries may be readonly
             //  isReadonlyKey: true || false          // key name on an individual entry is readonly
             //  cannotDelete: true || false           // individual entries can be permanent
             //  keyValidator: '',                     // regex string
@@ -82,13 +83,14 @@
             valueValidatorErrorTooltip: '@',
             valueValidatorErrorTooltipIcon: '@',
             valueIconTooltip: '@',                    // if the tooltip for the value icon is generic
+            valueFromSelectorOptions: '=',
             cannotAdd: '=?',
             cannotSort: '=?',
             cannotDelete: '=?',
             isReadonly: '=?',
-            isReadonlyKeys: '=?',                      // will only apply to existing keys,
-            addRowLink: '@',                           // creates a link to "add row" and sets its text label
-            showHeader: '=?',                           // show placeholder text as headers
+            isReadonlyKeys: '=?',                     // will only apply to existing keys,
+            addRowLink: '@',                          // creates a link to "add row" and sets its text label
+            showHeader: '=?',                         // show placeholder text as headers
             allowEmptyKeys: '=?',
             keyRequiredError: '@'
           },
@@ -150,9 +152,31 @@
             if('showHeader' in $attrs) {
               $scope.showHeader = true;
             }
+
             if('allowEmptyKeys' in $attrs) {
               $scope.allowEmptyKeys = true;
             }
+
+            var humanizeKind = $filter('humanizeKind');
+            $scope.groupByKind = function(object) {
+              return humanizeKind(object.kind);
+            };
+
+            $scope.valueFromObjectSelected = function(entry, selected) {
+              console.log(entry);
+              console.log(selected);
+              // entry.valueFrom = {};
+              if (selected.kind === 'ConfigMap') {
+                entry.valueFrom.configMapKeyRef = {
+                  name: selected.metadata.name
+                };
+              } else if (selected.kind === 'Secret') {
+                entry.valueFrom.secretKeyRef = {
+                  name: selected.metadata.name
+                };
+              }
+              // console.log(entry.valueFrom);
+            };
 
             // min/max lengths
             angular.extend($scope, {

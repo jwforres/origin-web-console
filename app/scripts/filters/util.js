@@ -588,9 +588,11 @@ angular.module('openshiftConsole')
         switch(refType) {
           case 'configMapKeyRef':
             envVar.valueAlt = 'Set to the key ' + from.key + ' in config map ' + from.name;
+            envVar.valueFromIsEditable = true;
             break;
           case 'secretKeyRef':
             envVar.valueAlt = 'Set to the key ' + from.key + ' in secret ' + from.name;
+            envVar.valueFromIsEditable = true;
             envVar.valueIcon = 'fa fa-user-secret';
             break;
           case 'fieldRef':

@@ -66,15 +66,13 @@
         // these keys are for kve and, if this function is used, will be removed.
         var toClean = [
           'valueAlt',
-          'isReadOnly',
+          'isReadonly',
           'isReadonlyKey',
           'cannotDelete',
           'keyValidator',
           'valueValidator',
           'keyValidatorError',
           'valueValidatorError',
-          'keyIcon',
-          'keyIconTooltip',
           'valueIcon',
           'valueIconTooltip',
           'keyValidatorErrorTooltip',

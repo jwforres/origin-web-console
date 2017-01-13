@@ -81,31 +81,7 @@
 
         <label for="uniqueForValue(unique, $index)" class="sr-only">{{valuePlaceholder}}</label>
 
-        <!-- value has icon -->
-        <div
-          class="input-group"
-          ng-if="entry.valueIcon">
-          <span class="input-group-addon">
-            <span
-              class="{{entry.valueIcon}}"
-              aria-hidden="true"
-              data-toggle="tooltip"
-              data-placement="top"
-              data-original-title="{{entry.valueIconTooltip || valueIconTooltip}}"
-              title="{{entry.valueIconTooltip || valueIconTooltip}}"></span>
-          </span>
-          <!-- valueAlt when value is not present or is on a separate object key such as valueFrom: { something: 'else' } -->
-          <input
-            ng-if="entry.valueAlt"
-            type="text"
-            class="form-control"
-            ng-class="{ '{{setFocusValClass}}' : $last  }"
-            id="{{uniqueForValue(unique, $index)}}"
-            name="{{uniqueForValue(unique, $index)}}"
-            ng-attr-placeholder="{{ (!isReadonlyAny) && valuePlaceholder || ''}}"
-            ng-model="entry.valueAlt"
-            readonly>
-          <!-- default value display -->
+        <div ng-if="(!entry.valueFrom)">
           <input
             ng-if="(!entry.valueAlt)"
             type="text"
@@ -122,34 +98,34 @@
             ng-required="!allowEmptyKeys && entry.value">
         </div>
 
-        <!-- value has no icon -->
-        <div ng-if="(!entry.valueIcon)">
-          <!-- valueAlt when value is not present or is on a separate object key such as valueFrom: { something: 'else' } -->
-          <input
-            ng-if="entry.valueAlt"
-            type="text"
-            class="form-control"
-            ng-class="{ '{{setFocusValClass}}' : $last  }"
-            id="{{uniqueForValue(unique, $index)}}"
-            name="{{uniqueForValue(unique, $index)}}"
-            ng-attr-placeholder="{{ (!isReadonlyAny) && valuePlaceholder || ''}}"
-            ng-model="entry.valueAlt"
-            readonly>
-          <!-- default value display -->
-          <input
-            ng-if="(!entry.valueAlt)"
-            type="text"
-            class="form-control"
-            ng-class="{ '{{setFocusValClass}}' : $last  }"
-            id="{{uniqueForValue(unique, $index)}}"
-            name="{{uniqueForValue(unique, $index)}}"
-            ng-attr-placeholder="{{ (!isReadonlyAny) && valuePlaceholder || ''}}"
-            ng-minlength="{{valueMinlength}}"
-            maxlength="{{valueMaxlength}}"
-            ng-model="entry.value"
-            ng-readonly="isReadonlyAny || isReadonlySome(entry.name) || entry.isReadonly"
-            ng-pattern="validation.val"
-            ng-required="!allowEmptyKeys && entry.value">
+        <div ng-if="entry.valueFrom">
+          <div ng-if="isReadonlyAny" class="faux-input-group">
+            <span
+              class="faux-form-control-addon {{entry.valueIcon}}"
+              aria-hidden="true"
+              data-toggle="tooltip"
+              data-placement="top"
+              data-original-title="{{entry.valueIconTooltip || valueIconTooltip}}"
+              title="{{entry.valueIconTooltip || valueIconTooltip}}"></span>
+            <div class="faux-form-control readonly">
+              {{entry.valueAlt}}
+            </div>
+          </div>
+          <div ng-if="(!isReadonlyAny) && entry.valueFromIsEditable">
+            <ui-select ng-model="entry.valueFrom.selected" ng-required="true" on-select="valueFromObjectSelected(entry, $select.selected)">
+              <ui-select-match placeholder="Select config map or secret">
+                <span>
+                  {{$select.selected.metadata.name}}
+                  <small class="text-muted">&ndash; {{$select.selected.kind | humanizeKind : true}}</small>
+                </span>
+              </ui-select-match>
+              <ui-select-choices
+                  repeat="source in valueFromSelectorOptions | filter : { metadata: { name: $select.search } } track by (source | uid)"
+                  group-by="groupByKind">
+                <span ng-bind-html="source.metadata.name | highlight : $select.search"></span>
+              </ui-select-choices>
+            </ui-select>
+          </div>
         </div>
 
         <!-- value help block -->
@@ -174,6 +150,7 @@
           <span class="validation-text">Minimum character count is {{valueMinlength}}</span>
         </span>
       </div>
+
       <div class="key-value-editor-buttons">
         <span
           ng-if="(!cannotSort) && (entries.length > 1)"
@@ -201,6 +178,7 @@
         role="button"
         aria-label="Add row"
         ng-click="onAddRow()">{{ addRowLink }}</a>
+        <!-- add second link with ng-if="valueFromSelectorOptions"> -->
     </div>
 
   </div>
