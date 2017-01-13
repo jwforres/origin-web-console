@@ -165,17 +165,33 @@
             $scope.valueFromObjectSelected = function(entry, selected) {
               console.log(entry);
               console.log(selected);
-              // entry.valueFrom = {};
               if (selected.kind === 'ConfigMap') {
                 entry.valueFrom.configMapKeyRef = {
                   name: selected.metadata.name
                 };
+                delete entry.valueFrom.secretKeyRef;
               } else if (selected.kind === 'Secret') {
                 entry.valueFrom.secretKeyRef = {
                   name: selected.metadata.name
                 };
+                delete entry.valueFrom.configMapKeyRef;
               }
-              // console.log(entry.valueFrom);
+              delete entry.valueFrom.key;
+            };
+
+            $scope.valueFromKeySelected = function(entry, selected) {
+              console.log(entry);
+              console.log(selected);
+              // entry.valueFrom = {};
+              if (entry.valueFrom.configMapKeyRef) {
+                entry.valueFrom.configMapKeyRef.key = selected;
+                return;
+              }
+
+              if (entry.valueFrom.secretKeyRef) {
+                entry.valueFrom.secretKeyRef.key = selected;
+                return;
+              }
             };
 
             // min/max lengths
@@ -286,6 +302,36 @@
                 }
               });
 
+              var findReferenceValue = function(entry) {
+                var object;
+
+                if (entry.valueFrom.configMapKeyRef) {
+                  object = _.find($scope.valueFromSelectorOptions, function(option) {
+                    return option.kind === 'ConfigMap' &&
+                           option.metadata.name === entry.valueFrom.configMapKeyRef.name;
+                  });
+
+                  return {
+                    object: object,
+                    key: entry.valueFrom.configMapKeyRef.key
+                  };
+                }
+
+                if (entry.valueFrom.secretKeyRef) {
+                  object = _.find($scope.valueFromSelectorOptions, function(option) {
+                    return option.kind === 'Secret' &&
+                           option.metadata.name === entry.valueFrom.secretKeyRef.name;
+                  });
+
+                  return {
+                    object: object,
+                    key: entry.valueFrom.secretKeyRef.key
+                  };
+                }
+
+                return null;
+              };
+
               // ensures we always have at least one set of inputs
               $scope.$watch('entries', function(newVal) {
                 // entries MUST be an array. if we get an empty array,
@@ -295,6 +341,17 @@
                 if(newVal && !newVal.length) {
                   addEntry($scope.entries);
                 }
+
+                _.each(newVal, function(entry) {
+                  var referenceValue;
+                  if(entry.valueFrom) {
+                    referenceValue = findReferenceValue(entry);
+                    if (referenceValue) {
+                      _.set(entry, 'valueFrom.selected', referenceValue.object);
+                      _.set(entry, 'valueFrom.key', referenceValue.key);
+                    }
+                  }
+                });
               });
 
             }
