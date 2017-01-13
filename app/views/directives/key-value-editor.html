@@ -112,27 +112,31 @@
             </div>
           </div>
           <div ng-if="(!isReadonlyAny) && entry.valueFromIsEditable">
-            <ui-select ng-model="entry.valueFrom.selected" ng-required="true" on-select="valueFromObjectSelected(entry, $select.selected)">
-              <ui-select-match placeholder="Select config map or secret">
-                <span>
-                  {{$select.selected.metadata.name}}
-                  <small class="text-muted">&ndash; {{$select.selected.kind | humanizeKind : true}}</small>
-                </span>
-              </ui-select-match>
-              <ui-select-choices
+            <div class="ui-select">
+              <ui-select ng-model="entry.valueFrom.selected" ng-required="true" on-select="valueFromObjectSelected(entry, $select.selected)">
+                <ui-select-match placeholder="Select config map or secret">
+                  <span>
+                    {{$select.selected.metadata.name}}
+                    <small class="text-muted">&ndash; {{$select.selected.kind | humanizeKind : true}}</small>
+                  </span>
+                </ui-select-match>
+                <ui-select-choices
                   repeat="source in valueFromSelectorOptions | filter : { metadata: { name: $select.search } } track by (source | uid)"
                   group-by="groupByKind">
-                <span ng-bind-html="source.metadata.name | highlight : $select.search"></span>
-              </ui-select-choices>
-            </ui-select>
-            <ui-select ng-model="entry.valueFrom.key" ng-required="true" on-select="valueFromKeySelected(entry, $select.selected)">
-              <ui-select-match placeholder="Select key">
-                {{$select.selected}}
-              </ui-select-match>
-              <ui-select-choices repeat="key in entry.valueFrom.selected.data | keys">
-                <span ng-bind-html="key | highlight : $select.search"></span>
-              </ui-select-choices>
-            </ui-select>
+                  <span ng-bind-html="source.metadata.name | highlight : $select.search"></span>
+                </ui-select-choices>
+              </ui-select>
+            </div>
+            <div class="ui-select">
+              <ui-select ng-model="entry.valueFrom.key" ng-required="true" on-select="valueFromKeySelected(entry, $select.selected)">
+                <ui-select-match placeholder="Select key">
+                  {{$select.selected}}
+                </ui-select-match>
+                <ui-select-choices repeat="key in entry.valueFrom.selected.data | keys">
+                  <span ng-bind-html="key | highlight : $select.search"></span>
+                </ui-select-choices>
+              </ui-select>
+            </div>
           </div>
         </div>
 

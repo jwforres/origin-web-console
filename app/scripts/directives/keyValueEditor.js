@@ -163,8 +163,6 @@
             };
 
             $scope.valueFromObjectSelected = function(entry, selected) {
-              console.log(entry);
-              console.log(selected);
               if (selected.kind === 'ConfigMap') {
                 entry.valueFrom.configMapKeyRef = {
                   name: selected.metadata.name
@@ -180,15 +178,10 @@
             };
 
             $scope.valueFromKeySelected = function(entry, selected) {
-              console.log(entry);
-              console.log(selected);
-              // entry.valueFrom = {};
               if (entry.valueFrom.configMapKeyRef) {
                 entry.valueFrom.configMapKeyRef.key = selected;
                 return;
-              }
-
-              if (entry.valueFrom.secretKeyRef) {
+              } else if (entry.valueFrom.secretKeyRef) {
                 entry.valueFrom.secretKeyRef.key = selected;
                 return;
               }

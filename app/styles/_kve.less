@@ -123,6 +123,20 @@
     width: 50%;
   }
 
+  .key-value-editor-input .ui-select {
+    @media(min-width: @screen-md-min) {
+      float: left;
+      width: 50%;
+    }
+    + .ui-select {
+      padding-top: 5px;
+      @media(min-width: @screen-md-min) {
+        padding-top: 0;
+        padding-left: 5px;
+      }
+    }
+  }
+
   .key-value-editor-header {
     margin-bottom: 5px;
   }

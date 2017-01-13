@@ -72,7 +72,7 @@ angular.module('openshiftConsole')
     var getErrorDetails = $filter('getErrorDetails');
 
     var displayError = function(errorMessage, errorDetails) {
-      $scope.alerts['attach-persistent-volume-claim'] = {
+      $scope.alerts['from-value-objects'] = {
         type: "error",
         message: errorMessage,
         details: errorDetails

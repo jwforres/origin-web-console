@@ -127,6 +127,17 @@ angular.module('openshiftConsole')
 
     var limitWatches = $filter('isIE')() || $filter('isEdge')();
 
+    var orderByDisplayName = $filter('orderByDisplayName');
+    var getErrorDetails = $filter('getErrorDetails');
+
+    var displayError = function(errorMessage, errorDetails) {
+      $scope.alerts['from-value-objects'] = {
+        type: "error",
+        message: errorMessage,
+        details: errorDetails
+      };
+    };
+
     ProjectsService
       .get($routeParams.project)
       .then(_.spread(function(project, context) {
@@ -135,6 +146,32 @@ angular.module('openshiftConsole')
         // projectPromise rather than just a namespace, so we have to pass the
         // context into the log-viewer directive.
         $scope.projectContext = context;
+
+        var configMapDataOrdered = [];
+        var secretDataOrdered = [];
+        $scope.valueFromObjects = [];
+
+        DataService.list("configmaps", context, null, { errorNotification: false }).then(function(configMapData) {
+          configMapDataOrdered = orderByDisplayName(configMapData.by("metadata.name"));
+          $scope.valueFromObjects = configMapDataOrdered.concat(secretDataOrdered);
+        }, function(e) {
+          if (e.code === 403) {
+            return;
+          }
+
+          displayError('Could not load config maps', getErrorDetails(e));
+        });
+
+        DataService.list("secrets", context, null, { errorNotification: false }).then(function(secretData) {
+          secretDataOrdered = orderByDisplayName(secretData.by("metadata.name"));
+          $scope.valueFromObjects = secretDataOrdered.concat(configMapDataOrdered);
+        }, function(e) {
+          if (e.code === 403) {
+            return;
+          }
+
+          displayError('Could not load secrets', getErrorDetails(e));
+        });
 
         var allHPA = {}, limitRanges = {};
         var updateHPA = function() {
