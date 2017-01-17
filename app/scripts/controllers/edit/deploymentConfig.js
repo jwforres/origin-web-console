@@ -47,6 +47,18 @@ angular.module('openshiftConsole')
       $scope.alerts[alert.name] = alert.data;
     });
     AlertMessageService.clearAlerts();
+
+    var orderByDisplayName = $filter('orderByDisplayName');
+    var getErrorDetails = $filter('getErrorDetails');
+
+    var displayError = function(errorMessage, errorDetails) {
+      $scope.alerts['from-value-objects'] = {
+        type: "error",
+        message: errorMessage,
+        details: errorDetails
+      };
+    };
+
     var watches = [];
 
     var getParamsPropertyName = function(strategyType) {
@@ -150,6 +162,32 @@ angular.module('openshiftConsole')
               $scope.secretsByType = _.each(secretNamesByType, function(secretsArray) {
                 secretsArray.unshift("");
               });
+            });
+
+            var configMapDataOrdered = [];
+            var secretDataOrdered = [];
+            $scope.valueFromObjects = [];
+
+            DataService.list("configmaps", context, null, { errorNotification: false }).then(function(configMapData) {
+              configMapDataOrdered = orderByDisplayName(configMapData.by("metadata.name"));
+              $scope.valueFromObjects = configMapDataOrdered.concat(secretDataOrdered);
+            }, function(e) {
+              if (e.code === 403) {
+                return;
+              }
+
+              displayError('Could not load config maps', getErrorDetails(e));
+            });
+
+            DataService.list("secrets", context, null, { errorNotification: false }).then(function(secretData) {
+              secretDataOrdered = orderByDisplayName(secretData.by("metadata.name"));
+              $scope.valueFromObjects = secretDataOrdered.concat(configMapDataOrdered);
+            }, function(e) {
+              if (e.code === 403) {
+                return;
+              }
+
+              displayError('Could not load secrets', getErrorDetails(e));
             });
 
             // If we found the item successfully, watch for changes on it

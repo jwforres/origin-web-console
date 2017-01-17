@@ -190,7 +190,17 @@
         role="button"
         aria-label="Add row"
         ng-click="onAddRow()">{{ addRowLink }}</a>
-        <!-- add second link with ng-if="valueFromSelectorOptions"> -->
+      <span
+        ng-if="valueFromSelectorOptions"
+        class="action-divider"
+        aria-hidden="true"> | </span>
+      <a
+        ng-if="valueFromSelectorOptions"
+        href=""
+        class="add-row-link"
+        role="button"
+        aria-label="Add row"
+        ng-click="onAddRowWithSelectors()">{{ addRowWithSelectorsLink }}</a>
     </div>
 
   </div>

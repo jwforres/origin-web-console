@@ -90,6 +90,7 @@
             isReadonly: '=?',
             isReadonlyKeys: '=?',                     // will only apply to existing keys,
             addRowLink: '@',                          // creates a link to "add row" and sets its text label
+            addRowWithSelectorsLink: '@',             // creates a link to "add row with selectors" and sets its text label
             showHeader: '=?',                         // show placeholder text as headers
             allowEmptyKeys: '=?',
             keyRequiredError: '@'
