@@ -33,7 +33,7 @@ exports.config = {
   // if you need to change the browser timeout, use
   // seleniumArgs: ['-browserTimeout=60']
   // Ignored if seleniumServerJar is null.
-  seleniumArgs: ['-Dwebdriver.gecko.driver=./node_modules/geckodriver/'],
+  seleniumArgs: ['-Dwebdriver.gecko.driver=./node_modules/geckodriver/geckodriver'],
   // ChromeDriver location is used to help find the chromedriver binary.
   // This will be passed to the Selenium jar as the system property
   // webdriver.chrome.driver. If null, Selenium will
@@ -135,6 +135,8 @@ exports.config = {
 
    // Optional: override global seleniumAddress on this capability only.
    // seleniumAddress: null
+   marionette: true,
+   acceptInsecureCerts: true
   },
 
   // If you would like to run more than one instance of WebDriver on the same
