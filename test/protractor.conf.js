@@ -33,7 +33,7 @@ exports.config = {
   // if you need to change the browser timeout, use
   // seleniumArgs: ['-browserTimeout=60']
   // Ignored if seleniumServerJar is null.
-  seleniumArgs: [],
+  seleniumArgs: ['-Dwebdriver.gecko.driver=./node_modules/geckodriver/'],
   // ChromeDriver location is used to help find the chromedriver binary.
   // This will be passed to the Selenium jar as the system property
   // webdriver.chrome.driver. If null, Selenium will
@@ -222,10 +222,10 @@ exports.config = {
       baseDirectory: './test/tmp/screenshots',
       takeScreenShotsOnlyForFailedSpecs: true,
       pathBuilder: function pathBuilder(spec, descriptions, results, capabilities) {
-        // Return '<specname>' as path for screenshots: 
-        // Example: 'list-should work'. 
+        // Return '<specname>' as path for screenshots:
+        // Example: 'list-should work'.
         return descriptions.reverse().join(' ');
-      }       
+      }
     }));
   },
 
