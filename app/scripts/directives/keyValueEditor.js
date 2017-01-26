@@ -25,6 +25,16 @@
           entries && entries.push(entry || newEntry());
         };
 
+        var addEntryWithSelectors = function(entries) {
+          entries && entries.push({
+            name: '',
+            valueFrom: {
+              selected: null,
+              key: null
+            },
+            valueFromIsEditable: true
+          });
+        };
 
         var setFocusOn = function(selector, value) {
           // $timeout just delays enough to ensure event/$digest resolution
@@ -252,6 +262,10 @@
                 onAddRow: function() {
                   addEntry($scope.entries);
                   setFocusOn('.'+ $scope.setFocusKeyClass);
+                },
+                onAddRowWithSelectors: function() {
+                  addEntryWithSelectors($scope.entries);
+                  setFocusOn('.'+ $scope.setFocusKeyClass);
                 }
               });
 
@@ -326,17 +340,8 @@
                 return null;
               };
 
-              // ensures we always have at least one set of inputs
-              $scope.$watch('entries', function(newVal) {
-                // entries MUST be an array. if we get an empty array,
-                // we add an empty entry to ensure the inputs snow.
-                // NOTE: entries must be an array, with a .push() method
-                // else addEntry() will fail.
-                if(newVal && !newVal.length) {
-                  addEntry($scope.entries);
-                }
-
-                _.each(newVal, function(entry) {
+              var findReferenceValueForEntries = function(entries) {
+                _.each(entries, function(entry) {
                   var referenceValue;
                   if(entry.valueFrom) {
                     referenceValue = findReferenceValue(entry);
@@ -346,6 +351,22 @@
                     }
                   }
                 });
+              };
+
+              // ensures we always have at least one set of inputs
+              $scope.$watch('entries', function(newVal) {
+                // entries MUST be an array. if we get an empty array,
+                // we add an empty entry to ensure the inputs show.
+                // NOTE: entries must be an array, with a .push() method
+                // else addEntry() will fail.
+                if(newVal && !newVal.length) {
+                  addEntry($scope.entries);
+                }
+                findReferenceValueForEntries(newVal);
+              });
+
+              $scope.$watch('valueFromSelectorOptions', function() {
+                findReferenceValueForEntries($scope.entries);
               });
 
             }
