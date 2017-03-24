@@ -15,7 +15,11 @@ angular.module("openshiftConsole")
                                   SecurityCheckService) {
     return {
       restrict: "E",
-      scope: false,
+      scope: {
+        context: '=',
+        project: '=',
+        isDialog: '='
+      },
       templateUrl: "views/directives/from-file.html",
       controller: function($scope) {
         var aceEditorSession;
@@ -76,7 +80,7 @@ angular.module("openshiftConsole")
         };
 
         var showWarningsOrCreate = function(result){
-          var alerts = SecurityCheckService.getSecurityAlerts($scope.createResources, $scope.projectName);
+          var alerts = SecurityCheckService.getSecurityAlerts($scope.createResources, $scope.project.metadata.name);
 
           // Now that all checks are completed, show any Alerts if we need to
           var quotaAlerts = result.quotaAlerts || [];
@@ -204,7 +208,7 @@ angular.module("openshiftConsole")
             };
             return false;
           }
-          if (item.metadata.namespace && item.metadata.namespace !== $scope.projectName) {
+          if (item.metadata.namespace && item.metadata.namespace !== $scope.project.metadata.name) {
             $scope.error = {
               message: item.kind + " " + item.metadata.name + " can't be created in project " + item.metadata.namespace + ". Can't create resource in different projects."
             };
@@ -268,12 +272,27 @@ angular.module("openshiftConsole")
 
           var path;
           if ($scope.resourceKind === "Template" && $scope.templateOptions.process && !$scope.errorOccured) {
-            var namespace = ($scope.templateOptions.add || $scope.updateResources.length > 0) ? $scope.projectName : "";
-            path = Navigate.createFromTemplateURL(resource, $scope.projectName, {namespace: namespace});
-          } else {
-            path = Navigate.projectOverviewURL($scope.projectName);
+            if ($scope.isDialog) {
+              $scope.$emit('fileImportedFromYAMLOrJSON', {
+                project: $scope.project,
+                template: resource
+              });
+            }
+            else {
+              var namespace = ($scope.templateOptions.add || $scope.updateResources.length > 0) ? $scope.project.metadata.name : "";
+              path = Navigate.createFromTemplateURL(resource, $scope.project.metadata.name, {namespace: namespace});
+              $location.url(path);
+            }
           }
-          $location.url(path);
+          else if ($scope.isDialog) {
+            $scope.$emit('fileImportedFromYAMLOrJSON', {
+              project: $scope.project
+            });
+          }
+          else {
+            path = Navigate.projectOverviewURL($scope.project.metadata.name);
+            $location.url(path);
+          }
         }
 
         function checkIfExists(item) {
@@ -318,7 +337,7 @@ angular.module("openshiftConsole")
           var resource;
           if (!_.isEmpty($scope.createResources)) {
             resource = _.head($scope.createResources);
-            DataService.create(APIService.kindToResource(resource.kind), null, resource, {namespace: $scope.projectName}).then(
+            DataService.create(APIService.kindToResource(resource.kind), null, resource, {namespace: $scope.project.metadata.name}).then(
               // create resource success
               function() {
                 AlertMessageService.addAlert({
@@ -340,7 +359,7 @@ angular.module("openshiftConsole")
               });
           } else {
             resource = _.head($scope.updateResources);
-            DataService.update(APIService.kindToResource(resource.kind), resource.metadata.name, resource, {namespace: $scope.projectName}).then(
+            DataService.update(APIService.kindToResource(resource.kind), resource.metadata.name, resource, {namespace: $scope.project.metadata.name}).then(
               // update resource success
               function() {
                 AlertMessageService.addAlert({
@@ -364,14 +383,15 @@ angular.module("openshiftConsole")
 
         }
 
+        var displayName = $filter('displayName');
         function createResourceList(){
           var titles = {
-            started: "Creating resources in project " + $scope.projectName,
-            success: "Creating resources in project " + $scope.projectName,
-            failure: "Failed to create some resources in project " + $scope.projectName
+            started: "Creating resources in project " + displayName($scope.project),
+            success: "Creating resources in project " + displayName($scope.project),
+            failure: "Failed to create some resources in project " + displayName($scope.project)
           };
           var helpLinks = {};
-          TaskList.add(titles, helpLinks, $scope.projectName, function() {
+          TaskList.add(titles, helpLinks, $scope.project.metadata.name, function() {
             var d = $q.defer();
 
             DataService.batch($scope.createResources, $scope.context, "create").then(
@@ -417,12 +437,12 @@ angular.module("openshiftConsole")
 
         function updateResourceList(){
           var titles = {
-            started: "Updating resources in project " + $scope.projectName,
-            success: "Updated resources in project " + $scope.projectName,
-            failure: "Failed to update some resources in project " + $scope.projectName
+            started: "Updating resources in project " + displayName($scope.project),
+            success: "Updated resources in project " + displayName($scope.project),
+            failure: "Failed to update some resources in project " + displayName($scope.project)
           };
           var helpLinks = {};
-          TaskList.add(titles, helpLinks, $scope.projectName, function() {
+          TaskList.add(titles, helpLinks, $scope.project.metadata.name, function() {
             var d = $q.defer();
 
             DataService.batch($scope.updateResources, $scope.context, "update").then(
@@ -473,6 +493,11 @@ angular.module("openshiftConsole")
             return d.promise;
           });
         }
+
+        // When the from-file component is displayed in a dialog, the create
+        // button is outside the component since it is in the wizard footer. Listen
+        // for an event for when the button is clicked.
+        $scope.$on('importFileFromYAMLOrJSON', $scope.create);
       }
     };
   });

@@ -26,7 +26,7 @@
       </div>
 
       <alerts alerts="alerts"></alerts>
-      <div class="buttons gutter-bottom" ng-class="{'gutter-top': !alerts.length}">
+      <div class="buttons gutter-bottom" ng-if="!isDialog" ng-class="{'gutter-top': !alerts.length}">
         <button
           type="submit"
           ng-click="create()"
